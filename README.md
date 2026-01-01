@@ -39,7 +39,7 @@ Ajouter dans `ox_inventory/data/items.lua` :
     description = 'Soulage les nausees et les vomissements',
     client = {
         anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
-        usetime = 2000,
+        usetime = 3000,
         export = 'pharmacie.useItem'
     }
 },
@@ -53,7 +53,7 @@ Ajouter dans `ox_inventory/data/items.lua` :
     description = 'Calme la toux et degage les voies respiratoires',
     client = {
         anim = { dict = 'mp_player_intdrink', clip = 'loop_bottle' },
-        usetime = 2500,
+        usetime = 3000,
         export = 'pharmacie.useItem'
     }
 },

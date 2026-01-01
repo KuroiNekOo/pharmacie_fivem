@@ -2,6 +2,68 @@ local ESX = exports['es_extended']:getSharedObject()
 
 local currentDisease = nil
 local pharmacyPed = nil
+local currentProp = nil
+
+-- ===========================================
+-- FONCTIONS PROP MEDICAMENT
+-- ===========================================
+
+local function attachMedicineProp()
+    local propConfig = Config.MedicineProp
+    local model = joaat(propConfig.model)
+
+    print('[PHARMACIE] Chargement du modele:', propConfig.model, 'Hash:', model)
+
+    lib.requestModel(model)
+
+    if not HasModelLoaded(model) then
+        print('[PHARMACIE] ERREUR: Modele non charge!')
+        return
+    end
+
+    print('[PHARMACIE] Modele charge avec succes')
+
+    local playerPed = PlayerPedId()
+    local boneIndex = GetPedBoneIndex(playerPed, propConfig.bone)
+    local coords = GetEntityCoords(playerPed)
+
+    print('[PHARMACIE] Bone index:', boneIndex)
+
+    currentProp = CreateObject(model, coords.x, coords.y, coords.z, false, false, false)
+
+    print('[PHARMACIE] Prop cree:', currentProp, 'Existe:', DoesEntityExist(currentProp))
+
+    if not DoesEntityExist(currentProp) then
+        print('[PHARMACIE] ERREUR: Prop non cree!')
+        SetModelAsNoLongerNeeded(model)
+        return
+    end
+
+    AttachEntityToEntity(
+        currentProp,
+        playerPed,
+        boneIndex,
+        propConfig.offset.x,
+        propConfig.offset.y,
+        propConfig.offset.z,
+        propConfig.rotation.x,
+        propConfig.rotation.y,
+        propConfig.rotation.z,
+        true, true, false, true, 1, true
+    )
+
+    print('[PHARMACIE] Prop attache a la main')
+
+    -- Liberer le modele de la RAM
+    SetModelAsNoLongerNeeded(model)
+end
+
+local function removeMedicineProp()
+    if currentProp and DoesEntityExist(currentProp) then
+        DeleteEntity(currentProp)
+        currentProp = nil
+    end
+end
 
 -- ===========================================
 -- CREATION DU PNJ PHARMACIEN
@@ -60,6 +122,9 @@ exports('useItem', function(data, slot)
         return false
     end
 
+    -- Attacher le prop de medicament
+    attachMedicineProp()
+
     -- Progress circle avec animation
     local success = lib.progressCircle({
         duration = data.client.usetime or 2000,
@@ -76,6 +141,9 @@ exports('useItem', function(data, slot)
             clip = data.client.anim.clip
         }
     })
+
+    -- Retirer le prop dans tous les cas
+    removeMedicineProp()
 
     if not success then
         return false
@@ -113,6 +181,7 @@ end)
 -- Recevoir la maladie du serveur
 RegisterNetEvent('pharmacie:client:setDisease', function(disease)
     currentDisease = disease
+    local playerPed = PlayerPedId()
 
     -- Lancer le thread d'animation
     CreateThread(function()
@@ -126,12 +195,10 @@ RegisterNetEvent('pharmacie:client:setDisease', function(disease)
                     lib.requestAnimDict(animData.dict)
 
                     -- Jouer l'animation
-                    TaskPlayAnim(cache.ped, animData.dict, animData.anim, 8.0, -8.0, animData.duration, 51, 0, false, false, false)
+                    TaskPlayAnim(playerPed, animData.dict, animData.anim, 8.0, -8.0, animData.duration, 51, 0, false, false, false)
 
                     -- Jouer le son
                     if animData.speech then
-                        local playerPed = PlayerPedId()
-
                         SetAmbientVoiceName(playerPed, "A_M_M_DOWNTOWN_01_BLACK_FULL_01")
 
                         PlayAmbientSpeech1(

@@ -53,6 +53,14 @@ Config.Cures = {
     ['sirop_toux'] = 'cough'
 }
 
+-- Prop de medicament (attache a la main pendant l'utilisation)
+Config.MedicineProp = {
+    model = 'prop_cs_pills',           -- Modele du prop (pot de pilules)
+    bone = 18905,                       -- BONETAG_L_PH_HAND (main gauche)
+    offset = vector3(0.12, 0.01, 0.02), -- Position relative
+    rotation = vector3(-90.0, 0.0, -40.0) -- Rotation relative
+}
+
 -- ===========================================
 -- ANIMATIONS DE MALADIES
 -- ===========================================
