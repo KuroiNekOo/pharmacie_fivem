@@ -17,7 +17,7 @@ Config.DiseaseChance = 100
 Config.DiseaseCheckInterval = 5000 -- 5 secondes
 
 -- Intervalle entre les animations de maladie (en millisecondes)
-Config.AnimationInterval = 10000 -- 10 secondes
+Config.AnimationInterval = 6000 -- 6 secondes
 
 -- ===========================================
 -- PHARMACIE
@@ -67,15 +67,19 @@ Config.MedicineProp = {
 
 Config.DiseaseAnimations = {
     ['nausea'] = {
-        dict = 'random@drunk_driver_1',
-        anim = 'vomit_low',
-        duration = 4000,
+        dict = 'anim@scripted@nightclub@vomit@',
+        anim = 'vomit_idle',
+        duration = 5000,
+        flag = 1,           -- Animation complete (tout le corps)
+        freeze = true,      -- Bloquer les mouvements pendant l'animation
         speech = 'GENERIC_HI'
     },
     ['cough'] = {
         dict = 'timetable@gardener@smoking_joint',
         anim = 'idle_cough',
         duration = 2500,
+        flag = 51,          -- Upper body only
+        freeze = false,
         speech = 'GENERIC_HI'
     }
 }

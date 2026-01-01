@@ -181,7 +181,6 @@ end)
 -- Recevoir la maladie du serveur
 RegisterNetEvent('pharmacie:client:setDisease', function(disease)
     currentDisease = disease
-    local playerPed = PlayerPedId()
 
     -- Lancer le thread d'animation
     CreateThread(function()
@@ -189,27 +188,36 @@ RegisterNetEvent('pharmacie:client:setDisease', function(disease)
             Wait(Config.AnimationInterval)
 
             if currentDisease then
+                local playerPed = PlayerPedId()
                 local animData = Config.DiseaseAnimations[currentDisease]
+
                 if animData then
                     -- Charger le dictionnaire d'animation
                     lib.requestAnimDict(animData.dict)
 
-                    -- Jouer l'animation
-                    TaskPlayAnim(playerPed, animData.dict, animData.anim, 8.0, -8.0, animData.duration, 51, 0, false, false, false)
+                    -- Bloquer les mouvements si necessaire
+                    if animData.freeze then
+                        FreezeEntityPosition(playerPed, true)
+                    end
+
+                    -- Jouer l'animation avec le flag configure
+                    local flag = animData.flag or 51
+                    TaskPlayAnim(playerPed, animData.dict, animData.anim, 8.0, -8.0, animData.duration, flag, 0, false, false, false)
 
                     -- Jouer le son
                     if animData.speech then
                         SetAmbientVoiceName(playerPed, "A_M_M_DOWNTOWN_01_BLACK_FULL_01")
-
-                        PlayAmbientSpeech1(
-                            playerPed,
-                            "GENERIC_HI",
-                            "SPEECH_PARAMS_FORCE"
-                        )
+                        PlayAmbientSpeech1(playerPed, "GENERIC_HI", "SPEECH_PARAMS_FORCE")
                     end
 
                     -- Attendre la fin de l'animation
                     Wait(animData.duration)
+
+                    -- Debloquer les mouvements
+                    if animData.freeze then
+                        FreezeEntityPosition(playerPed, false)
+                        ClearPedTasks(playerPed)
+                    end
                 end
             end
         end
