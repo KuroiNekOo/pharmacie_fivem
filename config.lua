@@ -70,16 +70,26 @@ Config.DiseaseAnimations = {
         dict = 'anim@scripted@nightclub@vomit@',
         anim = 'vomit_idle',
         duration = 5000,
-        flag = 1,           -- Animation complete (tout le corps)
-        freeze = true,      -- Bloquer les mouvements pendant l'animation
-        speech = 'GENERIC_HI'
+        flag = 1,               -- Animation complete (tout le corps)
+        freeze = true,          -- Bloquer les mouvements pendant l'animation
+        speech = 'VOMIT',       -- Son de vomissement
+        screenEffect = 'DrugsMichaelAliensFight'  -- Effet visuel pendant l'animation
     },
     ['cough'] = {
         dict = 'timetable@gardener@smoking_joint',
         anim = 'idle_cough',
         duration = 2500,
-        flag = 51,          -- Upper body only
+        flag = 51,              -- Upper body only
         freeze = false,
-        speech = 'GENERIC_HI'
+        speech = 'COUGH',       -- Son de toux
+        screenEffect = 'FocusIn' -- Effet visuel pendant l'animation
     }
 }
+
+-- Effets disponibles :
+-- 'DrugsMichaelAliensFight' - Malaise/drogue (vert, distordu)
+-- 'DrugsTrevorClownsFight'  - Distorsion forte
+-- 'FocusIn'                 - Flou focus
+-- 'ChopVision'              - Vision trouble
+-- 'DMT_flight_intro'        - Malaise leger
+-- 'Rampage'                 - Rouge agressif

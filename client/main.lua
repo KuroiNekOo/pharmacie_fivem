@@ -200,18 +200,27 @@ RegisterNetEvent('pharmacie:client:setDisease', function(disease)
                         FreezeEntityPosition(playerPed, true)
                     end
 
+                    -- Activer l'effet visuel pendant l'animation
+                    if animData.screenEffect then
+                        AnimpostfxPlay(animData.screenEffect, 0, true)
+                    end
+
                     -- Jouer l'animation avec le flag configure
                     local flag = animData.flag or 51
                     TaskPlayAnim(playerPed, animData.dict, animData.anim, 8.0, -8.0, animData.duration, flag, 0, false, false, false)
 
                     -- Jouer le son
                     if animData.speech then
-                        SetAmbientVoiceName(playerPed, "A_M_M_DOWNTOWN_01_BLACK_FULL_01")
-                        PlayAmbientSpeech1(playerPed, "GENERIC_HI", "SPEECH_PARAMS_FORCE")
+                        PlayAmbientSpeech1(playerPed, animData.speech, "SPEECH_PARAMS_FORCE_NORMAL")
                     end
 
                     -- Attendre la fin de l'animation
                     Wait(animData.duration)
+
+                    -- Arreter l'effet visuel
+                    if animData.screenEffect then
+                        AnimpostfxStop(animData.screenEffect)
+                    end
 
                     -- Debloquer les mouvements
                     if animData.freeze then
